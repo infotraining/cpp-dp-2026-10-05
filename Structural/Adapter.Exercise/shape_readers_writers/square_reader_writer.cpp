@@ -1,0 +1,33 @@
+#include "square_reader_writer.hpp"
+
+#include "../shape_factories.hpp"
+#include "../square.hpp"
+
+using namespace Drawing;
+using namespace IO;
+
+namespace
+{
+    bool is_registered = SingletonShapeRWFactory::instance()
+                             .register_creator(Factories::make_type_index<Square>(), [] { return std::make_unique<SquareReaderWriter>(); });
+} // namespace
+
+void SquareReaderWriter::read(Shape& shp, std::istream& in)
+{
+    Square& sqr = static_cast<Square&>(shp);
+
+    Point pt;
+    int size;
+
+    in >> pt >> size;
+
+    sqr.set_size(size);
+    sqr.set_coord(pt);
+}
+
+void SquareReaderWriter::write(const Shape& shp, std::ostream& out)
+{
+    const Square& square = static_cast<const Square&>(shp);
+
+    out << Square::id << " " << square.coord() << " " << square.size() << std::endl;
+}
