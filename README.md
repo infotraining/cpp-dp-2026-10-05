@@ -1,58 +1,58 @@
-# Szkolenie - Wzorce projektowe w C++ #
+# Training - Design Patterns in C++ #
 
-## Dokumentacja + slajdy
+## Documentation + slides
 
 * https://cpp-dp.infotraining.pl
 * https://cpp-dp.infotraining.pl/slides
 
-## Konfiguracja środowiska
+## Environment setup
 
-Proszę wybrać jedną z poniższych opcji:
+Please choose one of the options below:
 
-### Lokalna
+### Local
 
-Przed szkoleniem należy zainstalować:
+Before the training, please install:
 
-#### Kompilator C++ wspierający C++17 - do wyboru:
+#### A C++ compiler supporting C++17 - choose one:
   * Visual Studio 2022
-    * przy instalacji należy zaznaczyć opcje:
+    * during installation, select the following options:
       * Desktop development with C++
       * C++ CMake tools for Windows
       * vcpkg package manager
 
-  * GCC - Linux lub WSL
-    * gcc (wersja >= 12)
+  * GCC - Linux or WSL
+    * gcc (version >= 12)
     * [CMake > 3.25](https://cmake.org/)
-      * proszę sprawdzić wersję w linii poleceń        
+      * please check the version on the command line        
   
         ```
         cmake --version
         ```
     * vcpkg
-      * instalacja - https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash
-        * zklonować repozytorium vcpkg
+      * installation - https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash
+        * clone the vcpkg repository
           ```
           git clone https://github.com/microsoft/vcpkg.git
           ```
-        * uruchomić skrypt bootstrap-vcpkg.sh
+        * run the bootstrap-vcpkg.sh script
           ```
           cd vcpkg && ./bootstrap-vcpkg.sh
           ``` 
-        * dodać zmienną środowiskową VCPKG_ROOT
-          * w pliku `.bashrc` należy dodać wpis
+        * add the VCPKG_ROOT environment variable
+          * add the following entry to your `.bashrc` file
           ```
           export VCPKG_ROOT=/path/to/vcpkg
           export PATH=$VCPKG_ROOT:$PATH
           ```
     * IDE: Visual Studio Code
       * [Visual Studio Code](https://code.visualstudio.com/)
-      * zainstalować wtyczki
+      * install the extensions
         * C/C++ Extension Pack
         * Live Share
 
 ### Docker + Visual Studio Code
 
-Jeśli uczestnicy szkolenia korzystają w pracy z Docker'a, to należy zainstalować:
+If training participants use Docker at work, please install:
 
 #### Docker Desktop (Windows)
 
@@ -61,8 +61,8 @@ Jeśli uczestnicy szkolenia korzystają w pracy z Docker'a, to należy zainstalo
 #### Visual Studio Code
 
 * [Visual Studio Code](https://code.visualstudio.com/)
-* Zainstalować wtyczki
+* Install the extensions
   * Live Share
-  * Dev Containers ([wymagania](https://code.visualstudio.com/docs/devcontainers/containers#_system-requirements))
-    * po instalacji wtyczki - należy otworzyć w VS Code folder zawierający sklonowane repozytorium i
-      z palety poleceń (Ctrl+Shift+P) wybrać opcję **Dev Containers: Rebuild and Reopen in Container**
+  * Dev Containers ([requirements](https://code.visualstudio.com/docs/devcontainers/containers#_system-requirements))
+    * after installing the extension - open the folder containing the cloned repository in VS Code and
+      from the command palette (Ctrl+Shift+P) select **Dev Containers: Rebuild and Reopen in Container**
