@@ -13,7 +13,7 @@ namespace Drawing
     public:
         static constexpr const char* id = "Rectangle";
 
-        Rectangle(int x = 0, int y = 0, int w = 0, int h = 0);
+        explicit Rectangle(int x = 0, int y = 0, int w = 0, int h = 0);
 
         int width() const
         {

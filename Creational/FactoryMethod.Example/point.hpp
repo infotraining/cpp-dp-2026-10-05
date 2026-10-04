@@ -10,7 +10,7 @@ namespace Drawing
         int x = 0;
         int y = 0;
 
-        Point(int x = 0, int y = 0)
+        explicit Point(int x = 0, int y = 0)
             : x{x}
             , y{y}
         {
