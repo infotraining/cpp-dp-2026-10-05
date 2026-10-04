@@ -7,7 +7,7 @@
 
 #include "shapes.hpp"
 
-#if __cplusplus >= 202603L
+#if __cplusplus >= 202400L
 
 namespace PolymorphicWrappers
 {

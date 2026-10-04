@@ -61,7 +61,7 @@ FetchContent_MakeAvailable(json)
 #########################################
 # xyz_prorocols
 
-if(CXX_STANDARD EQUAL 26)
+if(CMAKE_CXX_STANDARD EQUAL 26)
   FetchContent_Declare(
     cc-protocol
     GIT_REPOSITORY https://github.com/jbcoe/cc-protocol.git

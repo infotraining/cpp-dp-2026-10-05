@@ -2,7 +2,7 @@
 #include "shape_polymorphic_wrappers.hpp"
 #include "shapes.hpp"
 
-#if __cplusplus >= 202603L
+#if __cplusplus >= 202400L
 
 #include <protocol.hh>
 #include <variant>

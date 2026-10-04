@@ -6,11 +6,13 @@ int main(int argc, char* argv[])
 {
     using namespace Drawing;
 
+    std::cout << "__cplusplus = " << __cplusplus << "\n";
+
     PolymorphicVariant::test_shape_polymorphic_variant();
 
     std::cout << "\n----------------------------\n";
 
-#if __cplusplus >= 202603L
+#if __cplusplus >= 202400L
 
     PolymorphicWrappers::test_shape_polymorphic_wrappers();
 

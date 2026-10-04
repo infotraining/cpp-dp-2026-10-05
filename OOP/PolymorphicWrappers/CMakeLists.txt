@@ -10,6 +10,8 @@ file(GLOB HEADERS_LIST "*.h" "*.hpp")
 
 add_executable(${TARGET_MAIN} ${SRC_LIST} ${HEADERS_LIST})
 
-if(CXX_STANDARD EQUAL 26)
+message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
+
+if(CMAKE_CXX_STANDARD EQUAL 26)
   target_link_libraries(${TARGET_MAIN} PRIVATE xyz_protocol::protocol)
 endif()
