@@ -68,6 +68,11 @@ namespace DynamicPolymorphism
             : formatter_{std::move(formatter)}
         { }
 
+        void set_formatter(std::unique_ptr<Formatter> new_formatter)
+        {
+            formatter_ = std::move(new_formatter);
+        }
+
         void log(const std::string& data)
         {
             std::cout << "LOG: " << formatter_->format(data) << '\n';
@@ -108,8 +113,7 @@ namespace StaticPolymorphism
 
         Logger(TFormatter formatter)
             : formatter_(std::move(formatter))
-        {
-        }
+        {}
 
         void log(const std::string& message)
         {
@@ -125,7 +129,7 @@ void dynamic_polymorphism()
     Logger logger{std::make_unique<UpperCaseFormatter>()};
     logger.log("Hello, World!");
 
-    logger = Logger{std::make_unique<LowerCaseFormatter>()};
+    logger.set_formatter(std::make_unique<LowerCaseFormatter>());
     logger.log("Hello, World!");
 
     logger = Logger{std::make_unique<CapitalizeFormatter>()};

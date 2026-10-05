@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <array>
+#include <cstdint>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <memory>
@@ -7,7 +9,6 @@
 #include <sstream>
 #include <variant>
 #include <vector>
-#include <cstdint>
 
 struct Color
 {
@@ -138,6 +139,73 @@ namespace Delegation
     };
 } // namespace Delegation
 
+namespace ModernCppDelegation
+{
+    // class TextAlignment
+    // {
+    // public:
+    //     virtual std::string aligned_text(const std::string& text, size_t line_width) const = 0;
+    //     virtual ~TextAlignment() = default;
+    // };
+
+    using TextAlignment = std::function<std::string(const std::string& text, size_t line_width)>;
+
+    class LeftAlignment
+    {
+    public:
+        std::string operator()(const std::string& text, size_t line_width) const
+        {
+            std::stringstream out_str;
+            out_str << text << std::setw(line_width - text.length()) << std::right << "";
+            return out_str.str();
+        }
+    };
+
+    class CenterAlignment
+    {
+    public:
+        std::string operator()(const std::string& text, size_t line_width) const
+        {
+            std::stringstream out_str;
+            auto pad_left = (line_width - text.length()) / 2;
+            auto pad_right = line_width - text.length() - pad_left;
+            out_str << std::setw(pad_left) << "" << text << std::setw(pad_right) << "";
+            return out_str.str();
+        }
+    };
+
+    auto right_alignment = [](const std::string& text, size_t line_width) {
+        std::stringstream out_str;
+        out_str << std::setw(line_width) << std::right << text;
+        return out_str.str();
+    };
+
+    class TextParagraph
+    {
+        std::string text_;
+        Color color_;
+        TextAlignment alignment_strategy_;
+
+    public:
+        TextParagraph(std::string text, Color color, TextAlignment alignment = LeftAlignment{})
+            : text_(std::move(text))
+            , color_(std::move(color))
+            , alignment_strategy_{alignment}
+        {
+        }
+
+        void set_alignment(TextAlignment alignment)
+        {
+            alignment_strategy_ = std::move(alignment);
+        }
+
+        void render(size_t line_width) const
+        {
+            std::cout << "[" << alignment_strategy_(text_, line_width) << "]\n";
+        }
+    };
+} // namespace ModernCppDelegation
+
 void use_inheritance()
 {
     using namespace Inheritance;
@@ -154,7 +222,7 @@ void use_inheritance()
 void use_delegation()
 {
     using namespace Delegation;
-    
+
     TextParagraph text{"This is sample of text...", Color{0, 0, 0}};
     text.render(80);
 
@@ -162,6 +230,20 @@ void use_delegation()
     text.render(80);
 
     text.set_alignment(std::make_unique<CenterAlignment>());
+    text.render(80);
+}
+
+void modern_delegetion()
+{
+    using namespace ModernCppDelegation;
+
+    TextParagraph text{"This is sample of text...", Color{0, 0, 0}};
+    text.render(80);
+
+    text.set_alignment(right_alignment);
+    text.render(80);
+
+    text.set_alignment(CenterAlignment{});
     text.render(80);
 }
 
