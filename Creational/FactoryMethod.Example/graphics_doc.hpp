@@ -8,35 +8,37 @@
 #include <cassert>
 #include <fstream>
 #include <functional>
-#include <unordered_map>
 #include <memory>
+#include <typeindex>
+#include <unordered_map>
 #include <vector>
 
 namespace Drawing
 {
-
-    using ShapeFactory = std::function<std::unique_ptr<Shape>()>;
-
-    class ShapeFactoryMap
+    template <typename TProduct, typename TId = std::string, typename TCreator = std::function<std::unique_ptr<TProduct>()>>
+    class GenericFactory
     {
-        std::unordered_map<std::string, ShapeFactory> map_;
+        std::unordered_map<TId, TCreator> map_;
 
     public:
-        bool register_factory(const std::string& id, ShapeFactory factory)
+        bool register_factory(const TId& id, TCreator factory)
         {
             return map_.emplace(id, std::move(factory)).second;
         }
 
-        std::unique_ptr<Shape> create_shape(const std::string& id)
+        std::unique_ptr<TProduct> create(const TId& id)
         {
             auto it = map_.find(id);
             if (it != map_.end())
             {
                 return it->second();
             }
-            throw std::runtime_error("Unknown shape id");
+            throw std::runtime_error("Unknown type id");
         }
     };
+
+    using ShapeFactory = GenericFactory<Shape>;
+    using ShapeRWFactory = GenericFactory<IO::ShapeReaderWriter, std::type_index>;
 
     template <typename TShape>
     std::unique_ptr<Shape> make_shape()
@@ -44,7 +46,8 @@ namespace Drawing
         return std::make_unique<TShape>();
     }
 
-    inline ShapeFactoryMap shape_factory_map;
+    inline ShapeFactory shape_factory;
+    inline ShapeRWFactory shape_rw_factory;
 
     // Static factories for creating shapes and their corresponding reader/writer objects
     // std::unique_ptr<Shape> create_shape(const std::string& id)
@@ -57,26 +60,28 @@ namespace Drawing
     //     throw std::runtime_error("Unknown shape id");
     // }
 
-    std::unique_ptr<IO::ShapeReaderWriter> create_shape_rw(Shape& shape)
-    {
-        using namespace IO;
+    // std::unique_ptr<IO::ShapeReaderWriter> create_shape_rw(Shape& shape)
+    // {
+    //     using namespace IO;
 
-        if (typeid(shape) == typeid(Rectangle))
-            return std::make_unique<RectangleReaderWriter>();
-        else if (typeid(shape) == typeid(Square))
-            return std::make_unique<SquareReaderWriter>();
+    //     if (typeid(shape) == typeid(Rectangle))
+    //         return std::make_unique<RectangleReaderWriter>();
+    //     else if (typeid(shape) == typeid(Square))
+    //         return std::make_unique<SquareReaderWriter>();
 
-        throw std::runtime_error("Unknown shape id");
-    }
+    //     throw std::runtime_error("Unknown shape id");
+    // }
 
     class GraphicsDoc
     {
         std::vector<std::unique_ptr<Shape>> shapes_;
-        ShapeFactoryMap& shape_factory_map_;
+        ShapeFactory& shape_factory_;
+        ShapeRWFactory& shape_rw_factory_;
 
     public:
-        GraphicsDoc(ShapeFactoryMap& shape_factory_map)
-            : shape_factory_map_(shape_factory_map)
+        GraphicsDoc(ShapeFactory& shape_factory, ShapeRWFactory& shape_rw_factory)
+            : shape_factory_(shape_factory)
+            , shape_rw_factory_(shape_rw_factory)
         {
         }
 
@@ -121,8 +126,8 @@ namespace Drawing
 
                 std::cout << "Loading " << shape_id << "..." << std::endl;
 
-                auto shape = shape_factory_map.create_shape(shape_id);
-                auto shape_rw = create_shape_rw(*shape);
+                auto shape = shape_factory_.create(shape_id);
+                auto shape_rw = shape_rw_factory_.create(typeid(*shape));
 
                 shape_rw->read(*shape, in_stream);
 
@@ -134,7 +139,7 @@ namespace Drawing
         {
             for (const auto& shape : shapes_)
             {
-                auto shape_rw = create_shape_rw(*shape);
+                auto shape_rw = shape_rw_factory_.create(typeid(*shape));
                 shape_rw->write(*shape, out_stream);
             }
         }
