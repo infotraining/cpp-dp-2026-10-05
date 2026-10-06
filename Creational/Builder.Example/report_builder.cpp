@@ -9,7 +9,6 @@ using namespace std;
 
 namespace Reports
 {
-
     ReportBuilder& HtmlReportBuilder::add_title(const std::string& header_text)
     {
         doc_.clear();
@@ -81,6 +80,8 @@ namespace Reports
 
     ReportBuilder& MarkdownReportBuilder::add_headers(const DataRow& headers)
     {
+        state_ = State::InHeader;
+        
         column_count_ = headers.size();
         string md_row;
         for (const auto& item : headers)
@@ -93,14 +94,12 @@ namespace Reports
         string separator(column_count_ * 15 + column_count_, '-');
         doc_.push_back(separator);
 
+
         return *this;
     }
 
     ReportBuilder& MarkdownReportBuilder::begin_data()
     {
-        column_count_ = 0;
-        doc_.push_back("\n");
-
         return *this;
     }
 

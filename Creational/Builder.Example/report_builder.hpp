@@ -58,6 +58,15 @@ namespace Reports
     private:
         MarkdownDocument doc_;
         int column_count_;
+        
+        enum class State
+        {
+            None,
+            InHeader,
+            InData
+        };
+        
+        State state_ = State::None;
     };
 
     class CsvReportBuilder : public ReportBuilder

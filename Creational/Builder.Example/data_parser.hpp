@@ -108,6 +108,8 @@ namespace Reports
             const auto& headers = json_data.front()["headers"].get<std::vector<std::string>>();
             report_builder().add_headers(headers);
 
+            report_builder().begin_data();
+
             for (const auto& row_item : json_data | std::views::drop(1))
             {
                 DataRow row_values{
