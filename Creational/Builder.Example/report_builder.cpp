@@ -79,9 +79,7 @@ namespace Reports
     }
 
     ReportBuilder& MarkdownReportBuilder::add_headers(const DataRow& headers)
-    {
-        state_ = State::InHeader;
-        
+    {       
         column_count_ = headers.size();
         string md_row;
         for (const auto& item : headers)
