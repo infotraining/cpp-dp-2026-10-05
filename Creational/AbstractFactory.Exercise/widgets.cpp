@@ -16,8 +16,6 @@ enum class IconType {
     error
 };
 
-
-
 class Widget
 {
 public:
@@ -117,19 +115,19 @@ public:
 class WidgetFactory
 {
 public:
-    virtual std::unique_ptr<Button> createButton(const std::string& caption, IconType icon_type) = 0;
-    virtual std::unique_ptr<Menu> createMenu(const std::string& text) = 0;
+    virtual std::unique_ptr<Button> create_button(const std::string& caption, IconType icon_type) = 0;
+    virtual std::unique_ptr<Menu> create_menu(const std::string& text) = 0;
 };
 
 class MotifWidgetFactory : public WidgetFactory
 {
 public:
-    std::unique_ptr<Button> createButton(const std::string& caption, IconType icon_type) override
+    std::unique_ptr<Button> create_button(const std::string& caption, IconType icon_type) override
     {
         return std::make_unique<MotifButton>(caption, icon_type);
     }
 
-    std::unique_ptr<Menu> createMenu(const std::string& text) override
+    std::unique_ptr<Menu> create_menu(const std::string& text) override
     {
         return std::make_unique<MotifMenu>(text);
     }
@@ -138,12 +136,12 @@ public:
 class WindowsWidgetFactory : public WidgetFactory
 {
 public:
-    std::unique_ptr<Button> createButton(const std::string& caption, IconType icon_type) override
+    std::unique_ptr<Button> create_button(const std::string& caption, IconType icon_type) override
     {
         return std::make_unique<WindowsButton>(caption, icon_type);
     }
 
-    std::unique_ptr<Menu> createMenu(const std::string& text) override
+    std::unique_ptr<Menu> create_menu(const std::string& text) override
     {
         return std::make_unique<WindowsMenu>(text);
     }
@@ -173,16 +171,16 @@ class WindowOne : public Window
 public:
     WindowOne(WidgetFactory& factory)
     {
-        add_widget(factory.createButton("OK", IconType::ok));
-        add_widget(factory.createMenu("File"));
+        add_widget(factory.create_button("OK", IconType::ok));
+        add_widget(factory.create_menu("File"));
 
-//#ifdef MOTIF
-//        add_widget(std::make_unique<MotifButton>("OK", IconType::ok));
-//        add_widget(std::make_unique<MotifMenu>("File"));
-//#else // WINDOWS
-//        add_widget(std::make_unique<WindowsButton>("OK", IconType::ok));
-//        add_widget(std::make_unique<WindowsMenu>("File"));
-//#endif
+        // #ifdef MOTIF
+        //         add_widget(std::make_unique<MotifButton>("OK", IconType::ok));
+        //         add_widget(std::make_unique<MotifMenu>("File"));
+        // #else // WINDOWS
+        //         add_widget(std::make_unique<WindowsButton>("OK", IconType::ok));
+        //         add_widget(std::make_unique<WindowsMenu>("File"));
+        // #endif
     }
 };
 
@@ -191,19 +189,19 @@ class WindowTwo : public Window
 public:
     WindowTwo(WidgetFactory& factory)
     {
-        add_widget(factory.createMenu("Edit"));
-        add_widget(factory.createButton("OK", IconType::ok));
-        add_widget(factory.createButton("Cancel", IconType::cancel));
+        add_widget(factory.create_menu("Edit"));
+        add_widget(factory.create_button("OK", IconType::ok));
+        add_widget(factory.create_button("Cancel", IconType::cancel));
 
-        //#ifdef MOTIF
-//        add_widget(std::make_unique<MotifMenu>("Edit"));
-//        add_widget(std::make_unique<MotifButton>("OK", IconType::ok));
-//        add_widget(std::make_unique<MotifButton>("Cancel", IconType::cancel));
-//#else // WINDOWS
-//        add_widget(std::make_unique<WindowsMenu>("Edit"));
-//        add_widget(std::make_unique<WindowsButton>("OK", IconType::ok));
-//        add_widget(std::make_unique<WindowsButton>("Cancel", IconType::cancel));
-//#endif
+        // #ifdef MOTIF
+        //        add_widget(std::make_unique<MotifMenu>("Edit"));
+        //        add_widget(std::make_unique<MotifButton>("OK", IconType::ok));
+        //        add_widget(std::make_unique<MotifButton>("Cancel", IconType::cancel));
+        // #else // WINDOWS
+        //        add_widget(std::make_unique<WindowsMenu>("Edit"));
+        //        add_widget(std::make_unique<WindowsButton>("OK", IconType::ok));
+        //        add_widget(std::make_unique<WindowsButton>("Cancel", IconType::cancel));
+        // #endif
     }
 };
 
@@ -213,11 +211,11 @@ public:
 
 int main()
 {
-    #ifdef MOTIF
-        MotifWidgetFactory factory;
-    #else // WINDOWS
-        ConcreteFactoryWindowsWidget factory;
-    #endif
+#ifdef MOTIF
+    MotifWidgetFactory factory;
+#else // WINDOWS
+    ConcreteFactoryWindowsWidget factory;
+#endif
 
     WindowOne w1(factory);
     w1.display();
