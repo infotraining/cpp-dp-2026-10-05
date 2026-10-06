@@ -24,12 +24,11 @@ struct ShapeTraits
 
 
 // CRTP (Curiously Recurring Template Parameter) for cloneable shapes
-template <typename TShape>
-class CloneableShape : public ShapeTraits<TShape>::base_type
+template <typename TShape, typename TBase = Shape>
+class CloneableShape : public TBase
 {
 public:
-    using base_type = ShapeTraits<TShape>::base_type;
-    using base_type::base_type;
+    using TBase::TBase;
 
     std::unique_ptr<Shape> clone() const override
     {
@@ -82,23 +81,15 @@ struct Color
     }
 };
 
-class ColorCircle;
-
-template <>
-struct ShapeTraits<ColorCircle>
-{
-    using base_type = Circle;
-};
-
-class ColorCircle : public CloneableShape<ColorCircle>
+class ColorCircle : public CloneableShape<ColorCircle, Circle>
 {
     Color color_;
 
 public:
-    using base_type = ShapeTraits<ColorCircle>::base_type;
+    using BaseType = CloneableShape<ColorCircle, Circle>;
 
     ColorCircle(int x, int y, int radius, const Color& color)
-        : CloneableShape<ColorCircle>{x, y, radius}
+        : BaseType{x, y, radius}
         , color_{color}
     {
     }
