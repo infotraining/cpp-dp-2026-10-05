@@ -2,6 +2,14 @@
 
 #include <cassert>
 
+#include "graphics_doc.hpp"
+
+namespace {
+    static bool is_registered = 
+        Drawing::SingletonShapeFactory::instance()
+            .register_factory(Drawing::Square::id, [] { return std::make_unique<Drawing::Square>(); });
+}
+
 Drawing::Square::Square(int x, int y, int size)
     : rect_{x, y, size, size}
 {

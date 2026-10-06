@@ -15,11 +15,17 @@ using namespace std;
 using namespace Drawing;
 using namespace Drawing::IO;
 
+namespace Drawing
+{
+    ShapeFactory shape_factory;
+    ShapeRWFactory shape_rw_factory;
+}
+
 int main()
 {
     // bootstrap the shape factory map
-    shape_factory.register_factory(Rectangle::id, make_shape<Rectangle>);
-    shape_factory.register_factory(Square::id, make_shape<Square>);
+    // shape_factory.register_factory(Rectangle::id, make_shape<Rectangle>);
+    // shape_factory.register_factory(Square::id, make_shape<Square>);
 
     // bootstrap the shape reader/writer factory map
     shape_rw_factory.register_factory(typeid(Rectangle), [] { return std::make_unique<RectangleReaderWriter>(); });
@@ -27,7 +33,7 @@ int main()
 
     cout << "Start..." << endl;
 
-    GraphicsDoc doc(shape_factory, shape_rw_factory);
+    GraphicsDoc doc(SingletonShapeFactory::instance(), shape_rw_factory);
 
     doc.load_from_file("drawing_fm_example.txt");
 

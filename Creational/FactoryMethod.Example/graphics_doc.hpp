@@ -13,6 +13,22 @@
 #include <unordered_map>
 #include <vector>
 
+template <typename T>
+class SingletonHolder
+{
+    SingletonHolder() = default;
+public:
+    SingletonHolder(const SingletonHolder&) = delete;
+    SingletonHolder& operator=(const SingletonHolder&) = delete;
+
+    static T& instance()
+    {
+        static T unique_instance;
+
+        return unique_instance;
+    }
+};
+
 namespace Drawing
 {
     template <typename TProduct, typename TId = std::string, typename TCreator = std::function<std::unique_ptr<TProduct>()>>
@@ -38,16 +54,16 @@ namespace Drawing
     };
 
     using ShapeFactory = GenericFactory<Shape>;
+    using SingletonShapeFactory = SingletonHolder<ShapeFactory>;
+
     using ShapeRWFactory = GenericFactory<IO::ShapeReaderWriter, std::type_index>;
+    using SingletonShapeRWFactory = SingletonHolder<ShapeRWFactory>;
 
     template <typename TShape>
     std::unique_ptr<Shape> make_shape()
     {
         return std::make_unique<TShape>();
     }
-
-    inline ShapeFactory shape_factory;
-    inline ShapeRWFactory shape_rw_factory;
 
     // Static factories for creating shapes and their corresponding reader/writer objects
     // std::unique_ptr<Shape> create_shape(const std::string& id)

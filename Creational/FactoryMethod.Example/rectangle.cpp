@@ -1,4 +1,9 @@
 #include "rectangle.hpp"
+#include "graphics_doc.hpp"
+
+static bool is_registered = 
+    Drawing::SingletonShapeFactory::instance()
+        .register_factory(Drawing::Rectangle::id, [] { return std::make_unique<Drawing::Rectangle>(); });
 
 Drawing::Rectangle::Rectangle(int x, int y, int w, int h)
     : ShapeBase{x, y}

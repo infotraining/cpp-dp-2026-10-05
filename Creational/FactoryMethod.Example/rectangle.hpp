@@ -5,7 +5,6 @@
 
 namespace Drawing
 {
-
     class Rectangle : public ShapeBase
     {
         int width_, height_;
