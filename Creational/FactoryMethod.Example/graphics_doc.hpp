@@ -7,21 +7,55 @@
 
 #include <cassert>
 #include <fstream>
-#include <vector>
+#include <functional>
+#include <unordered_map>
 #include <memory>
+#include <vector>
 
 namespace Drawing
 {
-    // Static factories for creating shapes and their corresponding reader/writer objects
-    std::unique_ptr<Shape> create_shape(const std::string& id)
-    {
-        if (id == Rectangle::id)
-            return std::make_unique<Rectangle>();
-        else if (id == Square::id)
-            return std::make_unique<Square>();
 
-        throw std::runtime_error("Unknown shape id");
+    using ShapeFactory = std::function<std::unique_ptr<Shape>()>;
+
+    class ShapeFactoryMap
+    {
+        std::unordered_map<std::string, ShapeFactory> map_;
+
+    public:
+        bool register_factory(const std::string& id, ShapeFactory factory)
+        {
+            return map_.emplace(id, std::move(factory)).second;
+        }
+
+        std::unique_ptr<Shape> create_shape(const std::string& id)
+        {
+            auto it = map_.find(id);
+            if (it != map_.end())
+            {
+                return it->second();
+            }
+            throw std::runtime_error("Unknown shape id");
+        }
+    };
+
+    template <typename TShape>
+    std::unique_ptr<Shape> make_shape()
+    {
+        return std::make_unique<TShape>();
     }
+
+    inline ShapeFactoryMap shape_factory_map;
+
+    // Static factories for creating shapes and their corresponding reader/writer objects
+    // std::unique_ptr<Shape> create_shape(const std::string& id)
+    // {
+    //     if (id == Rectangle::id)
+    //         return std::make_unique<Rectangle>();
+    //     else if (id == Square::id)
+    //         return std::make_unique<Square>();
+
+    //     throw std::runtime_error("Unknown shape id");
+    // }
 
     std::unique_ptr<IO::ShapeReaderWriter> create_shape_rw(Shape& shape)
     {
@@ -38,9 +72,11 @@ namespace Drawing
     class GraphicsDoc
     {
         std::vector<std::unique_ptr<Shape>> shapes_;
+        ShapeFactoryMap& shape_factory_map_;
 
     public:
-        GraphicsDoc()
+        GraphicsDoc(ShapeFactoryMap& shape_factory_map)
+            : shape_factory_map_(shape_factory_map)
         {
         }
 
@@ -85,7 +121,7 @@ namespace Drawing
 
                 std::cout << "Loading " << shape_id << "..." << std::endl;
 
-                auto shape = create_shape(shape_id);
+                auto shape = shape_factory_map.create_shape(shape_id);
                 auto shape_rw = create_shape_rw(*shape);
 
                 shape_rw->read(*shape, in_stream);

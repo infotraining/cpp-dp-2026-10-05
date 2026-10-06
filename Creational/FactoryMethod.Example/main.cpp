@@ -17,9 +17,13 @@ using namespace Drawing::IO;
 
 int main()
 {
+    // bootstrap the shape factory map
+    shape_factory_map.register_factory(Rectangle::id, make_shape<Rectangle>);
+    shape_factory_map.register_factory(Square::id, make_shape<Square>);
+
     cout << "Start..." << endl;
 
-    GraphicsDoc doc;
+    GraphicsDoc doc(shape_factory_map);
 
     doc.load_from_file("drawing_fm_example.txt");
 
