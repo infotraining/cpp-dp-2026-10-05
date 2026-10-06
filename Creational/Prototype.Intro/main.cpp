@@ -11,13 +11,40 @@ class Shape
 public:
     virtual void draw() = 0;
     virtual void move(int dx, int dy) = 0;
+    virtual std::unique_ptr<Shape> clone() const = 0;
     virtual ~Shape() = default;
 };
 
-class Circle : public Shape
-{   
+template <typename T>
+struct ShapeTraits
+{
+    using base_type = Shape;
+};
+
+
+
+// CRTP (Curiously Recurring Template Parameter) for cloneable shapes
+template <typename TShape>
+class CloneableShape : public ShapeTraits<TShape>::base_type
+{
+public:
+    using base_type = ShapeTraits<TShape>::base_type;
+    using base_type::base_type;
+
+    std::unique_ptr<Shape> clone() const override
+    {
+        return std::make_unique<TShape>(static_cast<const TShape&>(*this));
+    }
+};
+
+class Circle : public CloneableShape<Circle>
+{
+public:
+    using base_type = Shape;
+    
     Point center_;
     int radius_;
+
 public:
     Circle(int x, int y, int radius)
         : center_{x, y}
@@ -55,13 +82,23 @@ struct Color
     }
 };
 
-class ColorCircle : public Circle
+class ColorCircle;
+
+template <>
+struct ShapeTraits<ColorCircle>
+{
+    using base_type = Circle;
+};
+
+class ColorCircle : public CloneableShape<ColorCircle>
 {
     Color color_;
 
 public:
+    using base_type = ShapeTraits<ColorCircle>::base_type;
+
     ColorCircle(int x, int y, int radius, const Color& color)
-        : Circle{x, y, radius}
+        : CloneableShape<ColorCircle>{x, y, radius}
         , color_{color}
     {
     }
@@ -71,9 +108,14 @@ public:
         std::cout << "Setting " << color_ << " & ";
         Circle::draw();
     }
+
+    std::unique_ptr<Shape> clone() const override
+    {
+        return std::make_unique<ColorCircle>(*this);
+    }
 };
 
-class Rectangle : public Shape
+class Rectangle : public CloneableShape<Rectangle>
 {
     Point left_top_;
     int width_, height_;
@@ -96,6 +138,11 @@ public:
         left_top_.x += dx;
         left_top_.y += dy;
     }
+
+    // std::unique_ptr<Shape> clone() const override
+    // {
+    //     return std::make_unique<Rectangle>(*this);
+    // }
 };
 
 class GraphicsDoc
@@ -105,6 +152,14 @@ class GraphicsDoc
 public:
     GraphicsDoc() noexcept
     {
+    }
+
+    GraphicsDoc(const GraphicsDoc& other)
+    {
+        for (const auto& shape : other.shapes_)
+        {
+            shapes_.push_back(shape->clone());
+        }
     }
 
     void add_shape(std::unique_ptr<Shape> shape)
@@ -132,6 +187,6 @@ int main()
 
     std::cout << "\n";
 
-    // GraphicsDoc doc_copy = doc_original;
-    // doc_copy.render();
+    GraphicsDoc doc_copy = doc_original;
+    doc_copy.render();
 }
