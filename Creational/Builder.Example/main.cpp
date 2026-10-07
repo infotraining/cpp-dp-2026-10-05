@@ -67,14 +67,13 @@ int main()
     MarkdownReportBuilder md_builder;
 
     md_builder
-        .add_headers({"Header1", "Header2", "Header3"})
-        .begin_data()
-            .add_row({"Row1Col1", "Row1Col2", "Row1Col3"})
-            .add_row({"Row2Col1", "Row2Col2", "Row2Col3"})
-        .end_data()
-        .add_footer("Table 1.1");
-    
+        .add_title("TITLE")
+            .add_headers({"Header 1", "Header 2", "Header 3"})
+            .begin_data()
+                .add_row({"Row1Col1", "Row1Col2", "Row1Col3"})
+                .add_row({"Row2Col1", "Row2Col2", "Row2Col3"})
+            .end_data()
+            .add_footer("Table 1.1");
+
     MarkdownDocument md_doc2 = md_builder.get_report();
-    for (const auto& line : md_doc2)
-        cout << line << endl;
 }
