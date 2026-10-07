@@ -45,27 +45,27 @@ public:
         Bitmap new_bmp;
 
         // Add top border
-        new_bmp.push_back("┌" + std::string(bbox.width + 2 * border_thickness_, '-') + "┐");
+        new_bmp.push_back("+" + std::string(bbox.width + 2 * border_thickness_, '-') + "+");
 
         for (uint32_t i = 0; i < border_thickness_; ++i)
         {
-            new_bmp.push_back(std::format("│{}│", std::string(bbox.width + 2 * border_thickness_, ' ')));
+            new_bmp.push_back(std::format("|{}|", std::string(bbox.width + 2 * border_thickness_, ' ')));
         }
 
         const std::string border_fill(border_thickness_, ' ');
 
         for (const auto& row : original)
         {
-            new_bmp.push_back(std::format("│{}{}{}│", border_fill, row, border_fill));
+            new_bmp.push_back(std::format("|{}{}{}|", border_fill, row, border_fill));
         }
 
         for (uint32_t i = 0; i < border_thickness_; ++i)
         {
-            new_bmp.push_back(std::format("│{}│", std::string(bbox.width + 2 * border_thickness_, ' ')));
+            new_bmp.push_back(std::format("|{}|", std::string(bbox.width + 2 * border_thickness_, ' ')));
         }
 
         // Add bottom border
-        new_bmp.push_back("└" + std::string(bbox.width + 2 * border_thickness_, '-') + "┘");
+        new_bmp.push_back("+" + std::string(bbox.width + 2 * border_thickness_, '-') + "+");
 
         canvas = new_bmp;
     }

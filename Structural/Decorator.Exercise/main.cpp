@@ -13,5 +13,13 @@ int main()
     std::unique_ptr<Coffee> cf = std::make_unique<Espresso>();
     client(std::move(cf));
 
-    // TODO: create a coffee decorated with ExtraEspresso, Whisky & WhippedCream. Pass decorated coffee to the client.
+    CoffeeBuilder coffee_builder;
+
+    coffee_builder.create_coffee<Espresso>()
+        .add_condiment<ExtraEspressoCoffee>()
+        .add_condiment<WhiskyCoffee>()
+        .add_condiment<WhippedCreamCoffee>();
+
+    std::unique_ptr<Coffee> decorated = coffee_builder.build();
+    client(std::move(decorated));
 }
