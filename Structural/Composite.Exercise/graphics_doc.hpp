@@ -3,6 +3,8 @@
 
 #include "shape.hpp"
 #include "shape_factories.hpp"
+#include "shape_readers_writers/shape_group_reader_writer.hpp"
+#include "shape_group.hpp"
 #include "shape_readers_writers/circle_reader_writer.hpp"
 #include "shape_readers_writers/rectangle_reader_writer.hpp"
 #include "shape_readers_writers/square_reader_writer.hpp"
@@ -14,7 +16,7 @@ namespace Drawing
 {
     class GraphicsDoc
     {
-        std::vector<std::unique_ptr<Shape>> shapes_;
+        ShapeGroup shapes_;
         ShapeFactory& shape_factory_;
         ShapeRWFactory& shape_rw_factory_;
 
@@ -55,40 +57,24 @@ namespace Drawing
 
             shapes_.clear();
 
-            while (in_stream)
-            {
-                std::string shape_id;
-                in_stream >> shape_id;
+            std::string shape_id;
+            in_stream >> shape_id;
 
-                if (!in_stream)
-                    return;
+            assert(shape_id == ShapeGroup::id);
 
-                std::cout << "Loading " << shape_id << "..." << std::endl;
-
-                auto shape = shape_factory_.create(shape_id);
-                auto shape_rw = shape_rw_factory_.create(Factories::make_type_index(*shape));
-
-                shape_rw->read(*shape, in_stream);
-
-                shapes_.push_back(std::move(shape));
-            }
+            ShapeGroupReaderWriter group_rw(shape_factory_, shape_rw_factory_);
+            group_rw.read(shapes_, in_stream);
         }
 
         void save_to_stream(std::ostream& out_stream)
         {
-            for (const auto& shape : shapes_)
-            {
-                auto shape_rw = shape_rw_factory_.create(Factories::make_type_index(*shape));
-                shape_rw->write(*shape, out_stream);
-            }
+            ShapeGroupReaderWriter group_rw(shape_factory_, shape_rw_factory_);
+            group_rw.write(shapes_, out_stream);
         }
 
         void render()
         {
-            for (const auto& shape : shapes_)
-            {
-                shape->draw();
-            }
+            shapes_.draw();
         }
     };
 
