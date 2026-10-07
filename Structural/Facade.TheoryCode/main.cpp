@@ -21,8 +21,8 @@ void sending_email_using_facade()
     MailerService mailer;
 
     Email email = mailer.create_email()
-                    .add_title("Facade")
-                    .add_body("And now something completely different");
+                      .add_title("Facade")
+                      .add_body("And now something completely different");
 
     mailer.send_email("admin@infotraining.pl", "user@infotraining.pl", email);
 }

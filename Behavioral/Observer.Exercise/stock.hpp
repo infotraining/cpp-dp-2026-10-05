@@ -2,25 +2,60 @@
 #define STOCK_HPP_
 
 #include <iostream>
+#include <memory>
+#include <set>
 #include <string>
 
-// TODO: Define Observer interface
+//////////////////////////////////////////////////////////////////////////////////////
+template <typename TSource, typename... TEventArgs>
 class Observer
 {
 public:
-    virtual void update(/*...*/) = 0;
-    virtual ~Observer()
-    {
-    }
+    virtual void update(TSource&, TEventArgs... args) = 0;
+    virtual ~Observer() = default;
 };
 
-// TODO: Implement the class that sends notification on price change
+//////////////////////////////////////////////////////////////////////////////////////
+template <typename TSource, typename... TEventArgs>
+struct Observable
+{
+    using ObserverPtr = std::weak_ptr<Observer<TSource, TEventArgs...>>;
+
+    void subscribe(ObserverPtr observer)
+    {
+        observers_.insert(std::move(observer));
+    }
+
+    void unsubscribe(const ObserverPtr& observer) { observers_.erase(observer); }
+
+protected:
+    void notify(TSource& source, TEventArgs... args)
+    {
+        for (auto it = observers_.begin(); it != observers_.end();)
+        {
+            if (auto observer = it->lock())
+            {
+                observer->update(source, args...);
+                ++it;
+            }
+            else
+            {
+                it = observers_.erase(it); // observer was destroyed - remove its stale entry
+            }
+        }
+    }
+
+private:
+    std::set<ObserverPtr, std::owner_less<ObserverPtr>> observers_;
+};
+
+// TODO: Make Stock the observable (subject): derive it from Observable so that
+// it notifies subscribed observers whenever its price changes.
 class Stock
 {
 private:
     std::string symbol_;
     double price_;
-    // TODO: add container that holds observers
 public:
     Stock(const std::string& symbol, double price) : symbol_(symbol), price_(price)
     {
@@ -36,19 +71,17 @@ public:
         return price_;
     }
 
-    // TODO: subscribe observer
-
-    // TODO: unsubscribe observer
-
     void set_price(double price)
     {
         price_ = price;
 
-        // TODO: notify observers on changing the stock price
+        // TODO: notify all subscribed observers about the new price
     }
 };
 
-class Investor : public Observer
+// Concrete observer that reacts to stock price changes.
+// TODO: derive it from Observer<Stock, ...> so it can subscribe to a Stock.
+class Investor 
 {
     std::string name_;
 
@@ -59,7 +92,7 @@ public:
 
     void update(/*...*/)
     {
-        // TODO: implement callback
+        // TODO: implement the callback, e.g. print the investor's name and the stock's symbol and new price
     }
 };
 

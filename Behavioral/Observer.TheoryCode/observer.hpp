@@ -2,6 +2,7 @@
 #define OBSERVER_HPP_
 
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
 
@@ -18,22 +19,34 @@ public:
 template <typename TSource, typename... TEventArgs>
 struct Observable
 {
-    void subscribe(Observer<TSource, TEventArgs...>* observer)
-    {        
-        observers_.insert(observer);
+    using ObserverPtr = std::weak_ptr<Observer<TSource, TEventArgs...>>;
+
+    void subscribe(ObserverPtr observer)
+    {
+        observers_.insert(std::move(observer));
     }
-    
-    void unsubscribe(Observer<TSource, TEventArgs...>* observer) { observers_.erase(observer); }
+
+    void unsubscribe(const ObserverPtr& observer) { observers_.erase(observer); }
 
 protected:
     void notify(TSource& source, TEventArgs... args)
     {
-        for (auto&& observer : observers_)
-            observer->update(static_cast<TSource&>(*this), std::move(args...));
+        for (auto it = observers_.begin(); it != observers_.end();)
+        {
+            if (auto observer = it->lock())
+            {
+                observer->update(source, args...);
+                ++it;
+            }
+            else
+            {
+                it = observers_.erase(it); // observer no longer exists
+            }
+        }
     }
 
 private:
-    std::set<Observer<TSource, TEventArgs...>*> observers_;
+    std::set<ObserverPtr, std::owner_less<ObserverPtr>> observers_;
 };
 
 #endif /*OBSERVER_HPP_*/

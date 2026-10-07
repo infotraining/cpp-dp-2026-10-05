@@ -72,13 +72,13 @@ public:
 
 int main()
 {
-    Fan fan;
+    auto fan = std::make_shared<Fan>();
     TemperatureMonitor temp_monitor(21.0);
-    ConsoleLogger console_logger;
+    auto console_logger = std::make_shared<ConsoleLogger>();
 
-    temp_monitor.subscribe(&fan);
-    temp_monitor.subscribe(&console_logger);
-    fan.subscribe(&console_logger);
+    temp_monitor.subscribe(fan);
+    temp_monitor.subscribe(console_logger);
+    fan->subscribe(console_logger);
 
     temp_monitor.set_temperature(22.0);
     temp_monitor.set_temperature(23.0);
@@ -90,7 +90,11 @@ int main()
     temp_monitor.set_temperature(23.0);
     temp_monitor.set_temperature(21.0);
 
-    temp_monitor.unsubscribe(&fan);
+    // unsubscribe fan from temperature monitor
+    // temp_monitor.unsubscribe(fan);
+
+    // or delete a fan
+    // fan.reset();
 
     temp_monitor.set_temperature(22.0);
     temp_monitor.set_temperature(23.0);
