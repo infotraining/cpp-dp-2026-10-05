@@ -73,9 +73,23 @@ void test_composite_with_iterator()
 #endif // __cpp_lib_generator >= 202207L
 }
 
+std::generator<int> my_numbers(int max)
+{
+    for (int i = 0; i < max; ++i)
+    {
+        co_yield i;
+    }
+}
+
 int main()
 {
-    // test_basic_composite();
+    for (auto n : my_numbers(10))
+    {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
 
-    test_composite_with_iterator();
+    test_basic_composite();
+
+    // test_composite_withP_iterator();
 }

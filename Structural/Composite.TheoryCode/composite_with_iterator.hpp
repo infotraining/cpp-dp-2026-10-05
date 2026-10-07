@@ -131,6 +131,19 @@ namespace CompositeWithIterator
                 }
             }
         }
+
+        std::generator<const Component&> children_recursive() const
+        {
+            for (auto& child : children)
+            {
+                co_yield *child;
+
+                if (auto composite = dynamic_cast<const Composite*>(&*child))
+                {
+                    co_yield std::ranges::elements_of(composite->children_recursive());
+                }
+            }
+        }
 #endif // __cpp_lib_generator >= 202207L
     };
 
