@@ -62,13 +62,13 @@ namespace Drawing
 
             assert(shape_id == ShapeGroup::id);
 
-            ShapeGroupReaderWriter group_rw(shape_factory_, shape_rw_factory_);
+            IO::ShapeGroupReaderWriter group_rw(shape_factory_, shape_rw_factory_);
             group_rw.read(shapes_, in_stream);
         }
 
         void save_to_stream(std::ostream& out_stream)
         {
-            ShapeGroupReaderWriter group_rw(shape_factory_, shape_rw_factory_);
+            IO::ShapeGroupReaderWriter group_rw(shape_factory_, shape_rw_factory_);
             group_rw.write(shapes_, out_stream);
         }
 

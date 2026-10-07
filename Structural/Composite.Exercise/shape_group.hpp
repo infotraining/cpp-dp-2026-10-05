@@ -13,8 +13,8 @@ namespace Drawing
     // TODO: implement Iterator pattern for ShapeGroup composite that allows iterating over aggregated shapes
     class ShapeGroup : public CloneableShape<ShapeGroup>
     {
-        using PTR = std::shared_ptr<Shape>;
-        std::vector<PTR> _shapes;
+        using ShapePtr = std::shared_ptr<Shape>;
+        std::vector<ShapePtr> _shapes;
 
     public:
         constexpr static auto id = "ShapeGroup";
@@ -45,12 +45,12 @@ namespace Drawing
         ShapeGroup(ShapeGroup&& other) = default;
         ShapeGroup& operator=(ShapeGroup&& other) = default;
 
-        void add(PTR shape)
+        void add(ShapePtr shape)
         {
             _shapes.emplace_back(shape);
         }
 
-        void remove(PTR shape)
+        void remove(ShapePtr shape)
         {
             std::erase(_shapes, shape);
         }
