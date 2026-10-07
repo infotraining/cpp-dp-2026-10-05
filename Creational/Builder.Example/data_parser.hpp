@@ -38,9 +38,9 @@ namespace Reports
                 std::print("No headers found in file: {}\n", file_name);
                 throw std::runtime_error("No headers found in file: " + file_name);
             }
-            report_builder_.begin_data();
-
             report_builder_.add_headers(*headers);
+            
+            report_builder_.begin_data();
 
             while (std::optional<DataRow> data_row = parse_row(fin))
             {
