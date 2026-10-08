@@ -52,6 +52,7 @@ public:
     virtual ~Drawing() = default;
 };
 
+// Adapter for API_1
 class DrawingAPI1 : public Drawing
 {
 public:
@@ -76,6 +77,7 @@ public:
     }
 };
 
+// Adapter for API_2
 class DrawingAPI2 : public Drawing
 {
 public:

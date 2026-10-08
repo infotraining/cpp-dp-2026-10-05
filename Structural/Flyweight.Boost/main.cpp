@@ -23,7 +23,7 @@ namespace Helpers
 class Taxpayer
 {
     int id_;
-    std::string first_name_;
+    boost::flyweight<std::string> first_name_;
     std::string last_name_;
 
 public:
@@ -51,7 +51,7 @@ public:
 
     void to_upper()
     {
-        Helpers::to_upper(first_name_);
+        first_name_ = Helpers::to_upper_copy(first_name_);
         Helpers::to_upper(last_name_);
     }
 
