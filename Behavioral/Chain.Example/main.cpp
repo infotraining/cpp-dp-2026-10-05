@@ -37,7 +37,7 @@ public:
     void set_speed(uint8_t speed)
     {
         speed_ = std::clamp(speed, uint8_t{0}, uint8_t{10});
-        cout << "Fan(" << name_ << ") speed is set to " << static_cast<int>(speed) << '\n';
+        cout << "Fan(" << name_ << ") speed is set to " << static_cast<int>(speed_) << '\n';
     }
 
     uint8_t speed() const

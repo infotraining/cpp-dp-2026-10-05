@@ -46,10 +46,11 @@ class Device
 {
     std::string id_;
     std::shared_ptr<DeviceHandler> handler_;
+    DeviceHandler* tail_ = nullptr; // non-owning; last handler in the chain
 
 public:
     Device(std::string id)
-        : id_{id}
+        : id_{std::move(id)}
     {
     }
 
@@ -57,8 +58,13 @@ public:
     void add_handler(TCanHandle&& can_handle, TDeviceHandler&& handler)
     {
         auto new_handler = std::make_shared<DeviceHandler>(std::forward<TCanHandle>(can_handle), std::forward<TDeviceHandler>(handler));
-        new_handler->set_next_handler(handler_);
-        handler_ = new_handler;
+        // handlers are appended, so they are invoked in registration order
+        if (tail_)
+            tail_->set_next_handler(new_handler);
+        else
+            handler_ = new_handler;
+
+        tail_ = new_handler.get();
     }
 
     void on_temperature_change(Temperature temperature)
