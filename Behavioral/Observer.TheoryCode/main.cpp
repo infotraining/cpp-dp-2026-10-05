@@ -91,10 +91,10 @@ int main()
     temp_monitor.set_temperature(21.0);
 
     // unsubscribe fan from temperature monitor
-    // temp_monitor.unsubscribe(fan);
+    //temp_monitor.unsubscribe(fan);
 
     // or delete a fan
-    // fan.reset();
+    fan.reset();
 
     temp_monitor.set_temperature(22.0);
     temp_monitor.set_temperature(23.0);

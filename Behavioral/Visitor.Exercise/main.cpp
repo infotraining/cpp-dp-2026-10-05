@@ -16,8 +16,8 @@ int main()
 
     // TODO - uncomment code below
     
-    // PrintingVisitor printer;
-    // expr->accept(printer);
+    PrintingVisitor printer;
+    expr->accept(printer);
 
-    // cout << printer.str() << " = " << evaluator.result() << std::endl;
+    cout << printer.result() << " = " << evaluator.result() << std::endl;
 }
